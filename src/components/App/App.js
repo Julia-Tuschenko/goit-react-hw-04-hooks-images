@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
+
 export default function App (){
   
   const [artName, setArtName] = useState('');
@@ -25,76 +26,63 @@ export default function App (){
   
   
 
-  useEffect(() => {
-    if (page !== 2 && setPage !== page) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  },[artName, page]);
+
 
  const  toggleModal = () => {
     return setShowModal(!showModal);
   };
 
-  const  bigImage = () => {
+  const  bigImage = (largeImage = '') => {
     if(largeImage){
       toggleModal();
     };
   };
 
 useEffect(() => {
-   if (!artName) {
+    if (!artName) {
       return;
     };
-    async function fetchPictures() {
+    const feachPictures = () => {
       setIsLoading(true);
-      try {
-        const images = await searchApi(artName, page);
-        if (!images.length) {
-          throw new Error();
-        }
-        setPictures(prevImages => [...prevImages, ...pictures]);
-        setPage(prevState => (prevState.page + 1));
-        setTotalLengh(prevLength => prevLength.length);
+      searchApi({artName: artName, page})
+        .then(data => {  
+            setPictures(prevPictures => [...prevPictures, ...data])
+            // setPage(prevState => prevState.page + 1);
+            setTotalLengh(data.length);
+            if (page > 1) {
+              window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: 'smooth',})}
+        })          
+        .catch(error => {
+          setError(toast('Picture not found'(error.message))
+          )})
+        .finally(() => setIsLoading(false));
+    };
+    feachPictures();
+  }, [artName, page])
 
-        page > 1 &&
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: 'smooth',
-        });
-     } catch (error){
-        setError(error === (toast('Picture not found')));
-        console.log(error);
-        setIsLoading(false);
-     };
-    };  
-    fetchPictures();
-}, [artName, page, pictures])
-
-
-
-  const  handleFormSubmit = () => {
-    setArtName('');
+  const  handleFormSubmit = (name) => {
+    setArtName(name);
     setPage(1);
-    setPictures(pictures);
+    setPictures([]);
     setError(null);
     setImgTags('');
     setLargeImage('');
     setTotalLengh(0);
+    setIsLoading(false);
   };
 
   const loadMoreBtnClick = () => {
     setPage(prevPage => prevPage + 1);
   }
-    const btnEnable =pictures.length > 0 && !isLoading && error === null && totalLengh > 0;
+    const btnEnable =pictures.length > 0 && !isLoading &&  totalLengh > 0;
 
     return (
       <div className={styles.App}>
         <Searchbar onSubmit={handleFormSubmit} />
 
-        {error && <h1>{error}</h1>}
+        {error && <h1>Oops, it's all gone</h1>}
 
         <ImageGallery pictures={pictures} bigImage={bigImage} />
         {isLoading && <Loader />}
