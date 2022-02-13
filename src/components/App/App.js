@@ -25,17 +25,22 @@ export default function App (){
   const [totalLengh, setTotalLengh] = useState(0);
   
   
-
-
+  // const toggleModal = (largeImage, imgTags) => {
+  //   setShowModal(!showModal);
+  //   setLargeImage(largeImage);
+  //   setImgTags(imgTags);
+  //     };
+  //  //   { imageSrc: src, imageAlt: alt }
 
  const  toggleModal = () => {
-    return setShowModal(!showModal);
+    setShowModal(!showModal);
   };
 
   const  bigImage = (largeImage = '') => {
     if(largeImage){
-      toggleModal();
+      setLargeImage(largeImage); 
     };
+    toggleModal(); 
   };
 
 useEffect(() => {

@@ -15,7 +15,6 @@ export default function Modal ({children, showModal}){
 });
 
 
-
   const hendelKeyDown = event => {
     if (event.code === 'Escape') {
       showModal();
@@ -28,12 +27,12 @@ export default function Modal ({children, showModal}){
     }
   };
 
-    return (createPortal(
+    return createPortal(
       <div className={styles.Overlay} onClick={hendelBecdropClick}>
         <div className={styles.Modal}>{children}</div>
       </div>,
       modalRoot,
-    ));
+    );
 
 };
 
